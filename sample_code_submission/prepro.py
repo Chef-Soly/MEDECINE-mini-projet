@@ -1,32 +1,54 @@
-#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 """
-Created on Fri Mar 30 09:43:13 2018
-
-@author: rachid.abbara
+Le preprocessing
 """
 
+
 from sklearn.base import BaseEstimator
-from sklearn.decomposition import PCA
+
+#Pour les fonctions de preprocessing
+from sklearn.feature_selection import SelectFromModel
+from sklearn.feature_selection import SelectFpr
+from sklearn.feature_selection import GenericUnivariateSelect
 
 class Preprocessor(BaseEstimator):
+
     def __init__(self):
         '''
-        This example does not have comments: you must add some.
-        Add also some defensive programming code, like the (calculated) 
-        dimensions of the transformed X matrix.
+        Initialisation de la fonction de preprocessing
         '''
-        self.transformer = PCA(n_components=10)
-        print("PREPROCESSOR=" + self.transformer.__str__())
-
+        
+        self.transformer = SelectFpr(alpha=0.9)
+        #self.transformer = GenericUnivariateSelect(mode ='fwe', param = 1e-03)
+        
+               
+        
     def fit(self, X, y=None):
-        print("PREPRO FIT")
+        '''Centrage des donnees'''
+
         return self.transformer.fit(X, y)
 
+
     def fit_transform(self, X, y=None):
-        print("PREPRO FIT_TRANSFORM")
-        return self.transformer.fit_transform(X)
+        '''Appel de fit et transform pour le set d'entrainement'''
+
+        return self.transformer.fit_transform(X,y)
+
 
     def transform(self, X, y=None):
-        print("PREPRO TRANSFORM")
+        '''Application de la transformation'''
+
         return self.transformer.transform(X)
+    
+    print("Data Original")
+    print Data     
+
+    '''Appel de la classe Preprocessor'''
+    Prepro = Preprocessor() #J'appelle le preprocessing
+ 
+    Data.data['X_train'] = Prepro.fit_transform(Data.data['X_train'], Data.data['Y_train'])
+    Data.data['X_valid'] = Prepro.transform(Data.data['X_valid'])
+    Data.data['X_test'] = Prepro.transform(Data.data['X_test'])
+    
+    print("Data aprespro")
+    print Data
